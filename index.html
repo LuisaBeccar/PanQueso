@@ -559,10 +559,7 @@ $('#copyBtn').onclick = async () => {
   catch { $('#linkInput').select(); document.execCommand('copy'); }
   toast('Link copiado');
 };
-if (navigator.share) {
-  $('#shareBtn').hidden = false;
-  $('#shareBtn').onclick = () => navigator.share({ title: 'Pan y Queso', text: '¡Te desafío a Pan y Queso!', url: $('#linkInput').value }).catch(() => {});
-}
+
 $('#readyBtn').onclick = () => {
   const me = S.players[myRole];
   if (me.ready) return sendIntent({ type: 'unready' });
