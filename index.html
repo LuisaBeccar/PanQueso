@@ -230,13 +230,12 @@ a.btnlink{display:block;text-align:center;text-decoration:none}
       <label class="lbl" for="nameInput">Nombre de fantasía</label>
       <div class="row">
         <input type="text" id="nameInput" maxlength="18" autocomplete="off">
-        <button class="small-btn" id="diceBtn" aria-label="Sortear un nombre">🎲 Sortear</button>
+        <button class="small-btn" id="diceBtn" aria-label="Sortear un nombre">🎲 Random</button>
       </div>
       <fieldset style="margin-top:8px">
         <legend>Tamaño de pie</legend>
         <div class="sizes" id="sizes"></div>
       </fieldset>
-      <p class="muted" style="margin-top:10px">Pie grande: pasos largos y más alcance. Pie chico: más control.</p>
       <button class="big" id="readyBtn">¡Listo!</button>
       <div class="status"><span class="dot" id="meDot"></span><span id="statusText"></span></div>
     </div>
@@ -542,8 +541,8 @@ function bunting(w, h, n, sag) {
 }
 
 /* ---------- Perfil ---------- */
-const FANTASY = ['Capitán Queso', 'Doña Tostada', 'El Pisotón', 'Sr. Bizcocho', 'La Medialuna Veloz', 'Don Chipá',
-  'Reina del Pan', 'La Sombra Crocante', 'Pie de Manteca', 'Mister Mozzarella', 'El Choripán Ninja', 'Dulce de Leche Jr.'];
+const FANTASY = ['Pie Grande', 'Cinderella', 'El Sapo Pepe', 'Batichica', 'Harry Potter', 'Hello Kitty',
+  'Reina Batata', 'El Zorro', 'Botin de Oro', 'Pulgarcito', 'Bellota'];
 const randomName = () => FANTASY[Math.floor(Math.random() * FANTASY.length)];
 
 function buildProfile() {
@@ -691,7 +690,7 @@ function renderArena() {
   const myY = myRole === 'A' ? L - 1.8 : 3.6, opY = myRole === 'A' ? 3.6 : L - 1.8;
   const opTxt = S.phase === 'place' ? `${op.name}: ${op.confirmed ? 'ya eligió su lugar ✓' : 'eligiendo lugar…'}` : `Lado de ${op.name}`;
   labelsG.innerHTML =
-    `<text class="lbl-svg" x="${W / 2}" y="${L / 2 + 1.2}" text-anchor="middle" font-size="3.6"${up(W / 2, L / 2 + 1.2)}>Tierra de nadie</text>` +
+    `<text class="lbl-svg" x="${W / 2}" y="${L / 2 + 1.2}" text-anchor="middle" font-size="3.6"${up(W / 2, L / 2 + 1.2)}>Una calle me separa</text>` +
     `<text class="lbl-svg" x="${W / 2}" y="${myY}" text-anchor="middle" font-size="3"${up(W / 2, myY)}>${S.phase === 'place' && !me.pos ? 'Tu lado: tocá para pararte' : 'Tu lado'}</text>` +
     `<text class="lbl-svg" x="${W / 2}" y="${opY}" text-anchor="middle" font-size="3"${up(W / 2, opY)}>${esc(opTxt)}</text>`;
 
