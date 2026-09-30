@@ -30,7 +30,7 @@ body{
   background:var(--noche);
   color:#f6f1e7;
   font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
-  font-size:18px;
+  font-size:16px;
   font-weight:600;
   line-height:1.4;
   min-height:100vh;
@@ -78,7 +78,7 @@ label.lbl,legend{font-weight:800;font-size:18px;display:block;margin:10px 0 6px;
 fieldset{border:0;margin:0;padding:0;min-width:0}
 
 input[type=text],#linkInput{
-  width:100%;font:inherit;font-size:20px;font-weight:800;color:var(--tinta);
+  width:100%;font:inherit;font-size:18px;font-weight:800;color:var(--tinta);
   padding:12px 14px;border:3px solid var(--disabled);border-radius:12px;background:#fff;
 }
 input[type=text]:focus-visible,#linkInput:focus-visible{outline:none;border-color:#3b7dd8}
@@ -95,7 +95,7 @@ button:focus-visible{outline:4px solid #3b7dd8;outline-offset:3px}
 .small-btn:active{background:#eadfc4}
 .big{
   display:block;width:100%;
-  font-family:'Chango','Arial Black',Impact,sans-serif;font-size:32px;line-height:1.1;
+  font-family:'Chango','Arial Black',Impact,sans-serif;font-size:30px;line-height:1.1;
   padding:18px 14px;border:0;border-radius:18px;
   background:var(--queso);color:var(--tinta);
   box-shadow:0 7px 0 var(--queso-osc);
@@ -219,11 +219,9 @@ a.btnlink{display:block;text-align:center;text-decoration:none}
       <h2>Invitá a tu rival</h2>
       <p>Mandale este link. Cuando lo abra, se conecta solo.</p>
       <div class="row">
-        <input id="linkInput" readonly aria-label="Link de la partida" value="Creando partida…">
-        <button class="small-btn" id="copyBtn">Copiar</button>
+        <input id="linkInput" readonly aria-label="Link de la partida" value="Creando partida…" style="font-size: 10px">
+        <button class="small-btn" id="copyBtn">Copiar Link</button>
       </div>
-      <button class="small-btn" id="shareBtn" style="margin-top:10px" hidden>Compartir</button>
-    </div>
 
     <div class="card callout menta">
       <h2>Tu jugador</h2>
@@ -232,8 +230,8 @@ a.btnlink{display:block;text-align:center;text-decoration:none}
         <input type="text" id="nameInput" maxlength="18" autocomplete="off">
         <button class="small-btn" id="diceBtn" aria-label="Sortear un nombre">🎲 Random</button>
       </div>
-      <fieldset style="margin-top:8px">
-        <legend>Tamaño de pie</legend>
+      <fieldset style="margin-top:8px; margin-bottom:8px">
+        <legend>Talle de zapato</legend>
         <div class="sizes" id="sizes"></div>
       </fieldset>
       <button class="big" id="readyBtn">¡Listo!</button>
@@ -276,11 +274,11 @@ a.btnlink{display:block;text-align:center;text-decoration:none}
 const W = 50, L = 100, ZONE = 32;          // cancha: ancho, largo, profundidad de cada lado
 const FOOT_RATIO = 0.42;                   // ancho del pie = 42% de su largo
 const SIZES = [
-  { name: 'Piecito', len: 2.5, hint: 'paso cortísimo' },
-  { name: 'Chico',   len: 3.5, hint: 'paso corto' },
-  { name: 'Mediano', len: 4.5, hint: 'paso medio' },
-  { name: 'Grande',  len: 6,   hint: 'paso largo' },
-  { name: 'Patón',   len: 8,   hint: 'paso gigante' },
+  { name: 'Chiquito', len: 2.5, hint: 'pasos cortísimos' },
+  { name: 'Chico',   len: 3.5, hint: 'pasos cortos' },
+  { name: 'Mediano', len: 4.5, hint: 'pasos medios' },
+  { name: 'Grande',  len: 6,   hint: 'pasos largos' },
+  { name: 'Patón',   len: 8,   hint: 'pasos gigantes' },
 ];
 const other = r => (r === 'A' ? 'B' : 'A');
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
