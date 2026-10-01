@@ -484,26 +484,64 @@ function startHost(attempt = 0) {
     if (err.type === 'unavailable-id' && attempt < 4) { peer.destroy(); startHost(attempt + 1); return; }
     fatal('No pudimos crear la partida', 'Falló la conexión con el servidor de salas. Revisá tu internet y recargá la página.');
   });
+    peer.on('disconnected', () => { try { peer.reconnect(); } catch {} });
 }
+
+// function startGuest(code) {
+//   peer = new Peer();
+//   peer.on('open', () => {
+//     conn = peer.connect(ID_PREFIX + code, { serialization: 'json', reliable: true });
+//     conn.on('data', msg => {
+//       if (!msg) return;
+//       if (msg.type === 'state') { S = msg.state; render(); }
+//       if (msg.type === 'busy') fatal('Partida completa', 'Esta partida ya tiene dos jugadores. Pedile a tu amigo un link nuevo o creá una partida propia.');
+//     });
+//     conn.on('close', () => fatal('Se cortó la partida', 'Se perdió la conexión con el anfitrión.'));
+//   });
+//   peer.on('error', err => {
+//     if (err.type === 'peer-unavailable') fatal('No encontramos esa partida', 'El link puede haber vencido o el anfitrión cerró la página. Pedile un link nuevo.');
+//     else fatal('No pudimos conectarnos', 'Falló la conexión con el servidor de salas. Revisá tu internet y volvé a abrir el link.');
+//   });
+//   // Si en 15 s no llegó nada, avisamos.
+//   setTimeout(() => { if (!S) fatal('No hubo respuesta', 'El anfitrión no contestó. Verificá que siga con la página abierta.'); }, 15000);
+// }
 
 function startGuest(code) {
   peer = new Peer();
-  peer.on('open', () => {
-    conn = peer.connect(ID_PREFIX + code, { serialization: 'json', reliable: true });
-    conn.on('data', msg => {
+  let tries = 0, opened = false;
+
+  function connect() {
+    const c = peer.connect(ID_PREFIX + code, { serialization: 'json', reliable: true });
+    conn = c;
+    c.on('open', () => {
+      opened = true;
+      const hb = setInterval(() => { if (c.open) c.send({ type: 'hb' }); }, 3000);
+      c.on('close', () => clearInterval(hb));
+    });
+    c.on('data', msg => {
       if (!msg) return;
       if (msg.type === 'state') { S = msg.state; render(); }
       if (msg.type === 'busy') fatal('Partida completa', 'Esta partida ya tiene dos jugadores. Pedile a tu amigo un link nuevo o creá una partida propia.');
     });
-    conn.on('close', () => fatal('Se cortó la partida', 'Se perdió la conexión con el anfitrión.'));
-  });
+    c.on('close', () => { if (conn === c) fatal('Se cortó la partida', 'Se perdió la conexión con el anfitrión.'); });
+  }
+
+  peer.on('open', connect);
+  peer.on('disconnected', () => { try { peer.reconnect(); } catch {} });
   peer.on('error', err => {
+    if (err.type === 'peer-unavailable' && !opened && tries < 12) {
+      tries++;
+      $('#statusText').textContent = `Buscando la partida… (intento ${tries} de 12)`;
+      setTimeout(() => { const old = conn; connect(); try { old.close(); } catch {} }, 2500);
+      return;
+    }
     if (err.type === 'peer-unavailable') fatal('No encontramos esa partida', 'El link puede haber vencido o el anfitrión cerró la página. Pedile un link nuevo.');
     else fatal('No pudimos conectarnos', 'Falló la conexión con el servidor de salas. Revisá tu internet y volvé a abrir el link.');
   });
-  // Si en 15 s no llegó nada, avisamos.
-  setTimeout(() => { if (!S) fatal('No hubo respuesta', 'El anfitrión no contestó. Verificá que siga con la página abierta.'); }, 15000);
+  setTimeout(() => { if (!S) fatal('No hubo respuesta', 'El anfitrión no contestó. Verificá que siga con la página abierta.'); }, 45000);
 }
+
+
 
 /* ============================================================
    INTERFAZ
@@ -820,6 +858,14 @@ $('#muteBtn').onclick = () => {
   if (muted && 'speechSynthesis' in window) speechSynthesis.cancel();
 };
 document.addEventListener('pointerdown', () => ac(), { once: true });
+
+/* ----------En cualquier parte del script (por ejemplo, antes de boot), 
+agregá esto para que la reconexión también ocurra al volver a la app: ---------- */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && peer && peer.disconnected && !peer.destroyed) {
+    try { peer.reconnect(); } catch {}
+  }
+});
 
 /* ---------- Arranque ---------- */
 (function boot() {
